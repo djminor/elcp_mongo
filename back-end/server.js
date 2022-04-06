@@ -8,6 +8,8 @@ app.use(bodyParser.urlencoded({
 }));
 
 const mongoose = require('mongoose');
+const req = require('express/lib/request');
+const res = require('express/lib/response');
 
 mongoose.connect('mongodb://localhost:27017/elcp', {
     useNewUrlParser: true
@@ -44,6 +46,17 @@ app.get('/api/words', async(req, res) => {
     }
 });
 
+app.delete('/api/items/:id', async(req, res) => {
+    try {
+        await Word.deleteOne({
+            _id: req.params._id
+        });
+        res.sendStatus(200);
+    }   catch(error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+});
 const Word = mongoose.model('Word', wordSchema);
 
 app.listen(3000, () => console.log('Server open on port 3000!'));

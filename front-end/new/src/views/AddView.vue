@@ -15,8 +15,13 @@
                 <p></p>
                 <button @click="upload()">Add Word to Dictionary</button>
             </div>
-        </div>
+            <div class="upload" v-if="addWord">
+              <h2>{{addWord.word}}</h2>
+              <p>{{addWord.language}}</p>
+              <p>{{addWord.engWord}}</p>
+            </div>        
     </div>
+  </div>
 </template>
 <script>
 import axios from 'axios';
@@ -45,8 +50,23 @@ export default {
             }   catch(error) {
                 console.log(error);
             }
-        }
+        },
+        async getWords() {
+            try {
+                let response = await axios.get('/api/words');
+                this.words = response.data;
+                return true;
+            }   catch(error) {
+                console.log(error);
+            }
+        },
     },
+    computed: {
+      suggestions() {
+        let words = this.words.filter(word => word.word.toLowerCase().startsWith(this.findWord.toLowerCase()));
+        return words.sort((a, b) => a.word > b.word);
+      }
+    }
 }
 </script>
 <style scoped>
